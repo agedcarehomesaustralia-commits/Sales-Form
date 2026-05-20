@@ -380,7 +380,19 @@
     <h1>Sales Submission</h1>
     <p>Complete the form below — it will be sent directly to your manager.</p>
   </header>
- 
+
+  <div class="setup-warning">
+    <strong>⚙️ One-time setup required:</strong> This form uses <strong>EmailJS</strong> (free) to send emails without a server.
+    Visit <strong>emailjs.com</strong>, create a free account, then:
+    <ol style="margin: 0.5rem 0 0 1.1rem;">
+      <li>Create an <strong>Email Service</strong> (connect Gmail, Outlook, etc.) → copy your <code>Service ID</code></li>
+      <li>Create an <strong>Email Template</strong> using the variables listed in the HTML comments → copy your <code>Template ID</code></li>
+      <li>Copy your <strong>Public Key</strong> from Account → API Keys</li>
+      <li>Replace the 3 placeholder values in the <code>&lt;script&gt;</code> at the bottom of this file</li>
+    </ol>
+    Once done, remove this notice. The template variables to use are documented in the source code.
+  </div>
+
   <form id="salesForm" novalidate>
 
     <!-- SECTION 1: REP INFO -->
@@ -473,7 +485,27 @@
       </div>
     </div>
 
-    <!-- SECTION 5: FUNDING -->
+    <!-- SECTION 5: PRICING     <!-- SECTION 5: FUNDING --> NOTES -->
+    <div class="card">
+      <div class="section-label">Pricing &amp; Notes</div>
+      <div class="field">
+        <label for="customerPricing">Customer Pricing <span class="req">*</span></label>
+        <select id="customerPricing" name="customerPricing" required>
+          <option value="" disabled selected>Select pricing category...</option>
+          <option value="Healthcare">Healthcare</option>
+          <option value="Retail">Retail</option>
+          <option value="Wholesale">Wholesale</option>
+          <option value="Dealer">Dealer</option>
+          <option value="Gear2Go">Gear2Go</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="notes">Notes</label>
+        <textarea id="notes" name="notes" placeholder="Any additional notes..."></textarea>
+      </div>
+    </div>
+
+    <!-- SECTION 6: FUNDING -->
     <div class="card">
       <div class="section-label">Funding</div>
       <div class="field">
@@ -621,6 +653,8 @@
       start_time:        needsDates ? (document.getElementById('startTime').value || '—') : 'N/A',
       end_date:          needsDates ? (document.getElementById('endDate').value || '—') : 'N/A',
       end_time:          needsDates ? (document.getElementById('endTime').value || '—') : 'N/A',
+      customer_pricing:   document.getElementById('customerPricing').value || '—',
+      notes:             document.getElementById('notes').value.trim() || 'N/A',
       approved_funding:  funding ? funding.value : '—',
     };
 
