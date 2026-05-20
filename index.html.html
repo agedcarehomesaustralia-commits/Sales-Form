@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales Submission Form</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Fraunces:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F5F2ED;
+    --surface: #FFFFFF;
+    --surface2: #F0EDE8;
+    --border: #D8D3CC;
+    --border-strong: #B8B0A5;
+    --text: #1A1714;
+    --text-muted: #6B6560;
+    --text-hint: #9C9590;
+    --accent: #2B4C3F;
+    --accent-light: #E8F0ED;
+    --accent-mid: #4A7C69;
+    --danger: #C0392B;
+    --warning-bg: #FDF6EC;
+    --warning-border: #F0C070;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .page-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  header {
+    text-align: center;
+    padding: 2.5rem 0 2rem;
+  }
+
+  .logo-mark {
+    width: 48px;
+    height: 48px;
+    background: var(--accent);
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .logo-mark svg { fill: white; }
+
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 2rem;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+
+  header p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-hint);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--surface2);
+  }
+
+  .field {
+    margin-bottom: 1.25rem;
+  }
+
+  .field:last-child { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.01em;
+  }
+
+  label .req {
+    color: var(--accent-mid);
+    margin-left: 2px;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  input[type="time"],
+  select,
+  textarea {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 0.85rem;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent-mid);
+    box-shadow: 0 0 0 3px rgba(74, 124, 105, 0.12);
+  }
+
+  input::placeholder, textarea::placeholder { color: var(--text-hint); }
+
+  textarea {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.5;
+  }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239C9590' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.85rem center;
+    padding-right: 2.2rem;
+    cursor: pointer;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .service-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+  }
+
+  .service-option input[type="checkbox"] { display: none; }
+
+  .service-option label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: 400;
+    color: var(--text);
+    transition: border-color 0.15s, background 0.15s;
+    margin: 0;
+    letter-spacing: 0;
+    user-select: none;
+  }
+
+  .service-option label:hover {
+    border-color: var(--accent-mid);
+    background: var(--accent-light);
+  }
+
+  .service-option input:checked + label {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .service-option .check-box {
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+
+  .service-option input:checked + label .check-box {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .service-option input:checked + label .check-box::after {
+    content: '';
+    width: 8px;
+    height: 5px;
+    border-left: 1.5px solid white;
+    border-bottom: 1.5px solid white;
+    transform: rotate(-45deg) translateY(-1px);
+    display: block;
+  }
+
+  .date-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-top: 1rem;
+    display: none;
+  }
+
+  .date-block.visible { display: block; }
+
+  .date-block .date-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .funding-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+  }
+
+  .funding-option input[type="radio"] { display: none; }
+
+  .funding-option label {
+    padding: 0.55rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: var(--text);
+    font-weight: 400;
+    transition: all 0.15s;
+    margin: 0;
+    letter-spacing: 0;
+  }
+
+  .funding-option label:hover {
+    border-color: var(--accent-mid);
+    background: var(--accent-light);
+  }
+
+  .funding-option input:checked + label {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: white;
+    font-weight: 500;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--accent);
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+    transition: background 0.15s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .submit-btn:hover { background: #223D32; }
+  .submit-btn:active { transform: scale(0.99); }
+  .submit-btn:disabled { background: var(--border-strong); cursor: not-allowed; transform: none; }
+
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .notice {
+    display: none;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    font-size: 0.875rem;
+    margin-top: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .notice.success {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    background: var(--accent-light);
+    border: 1px solid #9CC4B2;
+    color: var(--accent);
+  }
+
+  .notice.error {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    background: #FEF0EF;
+    border: 1px solid #F5C0BC;
+    color: var(--danger);
+  }
+
+  .notice-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+
+  .setup-warning {
+    background: var(--warning-bg);
+    border: 1px solid var(--warning-border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    font-size: 0.82rem;
+    color: #7A5B10;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .setup-warning strong { font-weight: 600; }
+
+  .setup-warning code {
+    background: rgba(0,0,0,0.06);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: monospace;
+    font-size: 0.82rem;
+  }
+
+  @media (max-width: 480px) {
+    .grid-2, .service-options { grid-template-columns: 1fr; }
+    header h1 { font-size: 1.6rem; }
+    .card { padding: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <header>
+    <div class="logo-mark">
+      <svg width="24" height="24" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+    </div>
+    <h1>Sales Submission</h1>
+    <p>Complete the form below — it will be sent directly to your manager.</p>
+  </header>
+
+  <div class="setup-warning">
+    <strong>⚙️ One-time setup required:</strong> This form uses <strong>EmailJS</strong> (free) to send emails without a server.
+    Visit <strong>emailjs.com</strong>, create a free account, then:
+    <ol style="margin: 0.5rem 0 0 1.1rem;">
+      <li>Create an <strong>Email Service</strong> (connect Gmail, Outlook, etc.) → copy your <code>Service ID</code></li>
+      <li>Create an <strong>Email Template</strong> using the variables listed in the HTML comments → copy your <code>Template ID</code></li>
+      <li>Copy your <strong>Public Key</strong> from Account → API Keys</li>
+      <li>Replace the 3 placeholder values in the <code>&lt;script&gt;</code> at the bottom of this file</li>
+    </ol>
+    Once done, remove this notice. The template variables to use are documented in the source code.
+  </div>
+
+  <form id="salesForm" novalidate>
+
+    <!-- SECTION 1: REP INFO -->
+    <div class="card">
+      <div class="section-label">Representative</div>
+      <div class="field">
+        <label for="repName">Rep Name <span class="req">*</span></label>
+        <input type="text" id="repName" name="repName" placeholder="Your full name" required>
+      </div>
+    </div>
+
+    <!-- SECTION 2: CUSTOMER INFO -->
+    <div class="card">
+      <div class="section-label">Customer Details</div>
+      <div class="field">
+        <label for="customerName">Customer Name <span class="req">*</span></label>
+        <input type="text" id="customerName" name="customerName" placeholder="Full name" required>
+      </div>
+      <div class="field">
+        <label for="customerAddress">Customer Address <span class="req">*</span></label>
+        <input type="text" id="customerAddress" name="customerAddress" placeholder="Street address, city, state, postcode" required>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label for="customerEmail">Email <span class="req">*</span></label>
+          <input type="email" id="customerEmail" name="customerEmail" placeholder="customer@email.com" required>
+        </div>
+        <div class="field">
+          <label for="customerPhone">Phone Number <span class="req">*</span></label>
+          <input type="tel" id="customerPhone" name="customerPhone" placeholder="+61 4XX XXX XXX" required>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: PRODUCT -->
+    <div class="card">
+      <div class="section-label">Product</div>
+      <div class="field">
+        <label for="productsRequested">Products Requested <span class="req">*</span></label>
+        <textarea id="productsRequested" name="productsRequested" placeholder="List each product on a new line..." required></textarea>
+      </div>
+    </div>
+
+    <!-- SECTION 4: SERVICE -->
+    <div class="card">
+      <div class="section-label">Service Type</div>
+      <div class="field">
+        <label>Select all that apply <span class="req">*</span></label>
+        <div class="service-options">
+          <div class="service-option">
+            <input type="checkbox" id="svc_quote" name="service" value="Quote">
+            <label for="svc_quote"><span class="check-box"></span> Quote</label>
+          </div>
+          <div class="service-option">
+            <input type="checkbox" id="svc_rental" name="service" value="Rental">
+            <label for="svc_rental"><span class="check-box"></span> Rental</label>
+          </div>
+          <div class="service-option">
+            <input type="checkbox" id="svc_trial" name="service" value="3-Day Trial">
+            <label for="svc_trial"><span class="check-box"></span> 3-Day Trial</label>
+          </div>
+          <div class="service-option">
+            <input type="checkbox" id="svc_sah" name="service" value="S@H">
+            <label for="svc_sah"><span class="check-box"></span> S@H</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- DATE/TIME block — shown when Rental or 3-Day Trial is checked -->
+      <div id="dateBlock" class="date-block">
+        <div class="date-label">📅 Booking Dates &amp; Times</div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="startDate">Start Date</label>
+            <input type="date" id="startDate" name="startDate">
+          </div>
+          <div class="field">
+            <label for="startTime">Start Time</label>
+            <input type="time" id="startTime" name="startTime">
+          </div>
+          <div class="field">
+            <label for="endDate">End Date</label>
+            <input type="date" id="endDate" name="endDate">
+          </div>
+          <div class="field">
+            <label for="endTime">End Time</label>
+            <input type="time" id="endTime" name="endTime">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5: FUNDING -->
+    <div class="card">
+      <div class="section-label">Funding</div>
+      <div class="field">
+        <label>Approved Funding <span class="req">*</span></label>
+        <div class="funding-toggle">
+          <div class="funding-option">
+            <input type="radio" id="funding_yes" name="approvedFunding" value="Yes" required>
+            <label for="funding_yes">✓ Yes</label>
+          </div>
+          <div class="funding-option">
+            <input type="radio" id="funding_no" name="approvedFunding" value="No">
+            <label for="funding_no">✕ No</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn" id="submitBtn">
+      <div class="spinner" id="spinner"></div>
+      <span id="btnText">Send Submission</span>
+    </button>
+
+    <div class="notice success" id="successMsg">
+      <span class="notice-icon">✅</span>
+      <div><strong>Submission sent!</strong> The form has been emailed successfully. You can now close this tab or submit another.</div>
+    </div>
+    <div class="notice error" id="errorMsg">
+      <span class="notice-icon">⚠️</span>
+      <div id="errorText"><strong>Something went wrong.</strong> Please check your connection and try again.</div>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  // ─────────────────────────────────────────────────────────────
+  //  EMAILJS SETUP — replace these 3 values after setting up
+  //  your free account at https://www.emailjs.com
+  // ─────────────────────────────────────────────────────────────
+  const EMAILJS_PUBLIC_KEY  = '9qWQRpjIBcZZmtKll';   // Account → API Keys
+  const EMAILJS_SERVICE_ID  = 'service_unmrsvoi';   // Email Services
+  const EMAILJS_TEMPLATE_ID = 'template_69a3b2g';  // Email Templates
+  // ─────────────────────────────────────────────────────────────
+  //  EMAIL TEMPLATE VARIABLES (paste these into your EmailJS template)
+  //  To: agedcarehomesaustralia@gmail.com
+  //  Subject: New Sales Submission — {{rep_name}}
+  //
+  //  {{rep_name}}          Rep Name
+  //  {{customer_name}}     Customer Name
+  //  {{customer_address}}  Customer Address
+  //  {{customer_email}}    Customer Email
+  //  {{customer_phone}}    Customer Phone
+  //  {{products}}          Products Requested
+  //  {{services}}          Service Type(s)
+  //  {{start_date}}        Start Date (if applicable)
+  //  {{start_time}}        Start Time (if applicable)
+  //  {{end_date}}          End Date (if applicable)
+  //  {{end_time}}          End Time (if applicable)
+  //  {{approved_funding}}  Approved Funding (Yes/No)
+  // ─────────────────────────────────────────────────────────────
+
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+
+  // Show/hide date block
+  const serviceCheckboxes = document.querySelectorAll('input[name="service"]');
+  const dateBlock = document.getElementById('dateBlock');
+
+  function toggleDateBlock() {
+    const rentalChecked = document.getElementById('svc_rental').checked;
+    const trialChecked  = document.getElementById('svc_trial').checked;
+    if (rentalChecked || trialChecked) {
+      dateBlock.classList.add('visible');
+    } else {
+      dateBlock.classList.remove('visible');
+    }
+  }
+
+  serviceCheckboxes.forEach(cb => cb.addEventListener('change', toggleDateBlock));
+
+  // Form submit
+  const form       = document.getElementById('salesForm');
+  const submitBtn  = document.getElementById('submitBtn');
+  const spinner    = document.getElementById('spinner');
+  const btnText    = document.getElementById('btnText');
+  const successMsg = document.getElementById('successMsg');
+  const errorMsg   = document.getElementById('errorMsg');
+  const errorText  = document.getElementById('errorText');
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    successMsg.style.display = 'none';
+    errorMsg.style.display   = 'none';
+
+    // Gather selected services
+    const selectedServices = [...document.querySelectorAll('input[name="service"]:checked')]
+      .map(cb => cb.value).join(', ') || '—';
+
+    // Validate required fields
+    const requiredFields = ['repName','customerName','customerAddress','customerEmail','customerPhone','productsRequested'];
+    let valid = true;
+
+    requiredFields.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el.value.trim()) {
+        el.style.borderColor = '#E24B4A';
+        valid = false;
+      } else {
+        el.style.borderColor = '';
+      }
+    });
+
+    if (!selectedServices || selectedServices === '—') {
+      valid = false;
+    }
+
+    const funding = document.querySelector('input[name="approvedFunding"]:checked');
+    if (!funding) {
+      valid = false;
+    }
+
+    if (!valid) {
+      errorText.innerHTML = '<strong>Please fill in all required fields</strong> and select at least one service type and a funding option.';
+      errorMsg.style.display = 'flex';
+      return;
+    }
+
+    // Loading state
+    submitBtn.disabled = true;
+    spinner.style.display = 'block';
+    btnText.textContent = 'Sending…';
+
+    const needsDates = document.getElementById('svc_rental').checked || document.getElementById('svc_trial').checked;
+
+    const templateParams = {
+      to_email:          'agedcarehomesaustralia@gmail.com',
+      rep_name:          document.getElementById('repName').value.trim(),
+      customer_name:     document.getElementById('customerName').value.trim(),
+      customer_address:  document.getElementById('customerAddress').value.trim(),
+      customer_email:    document.getElementById('customerEmail').value.trim(),
+      customer_phone:    document.getElementById('customerPhone').value.trim(),
+      products:          document.getElementById('productsRequested').value.trim(),
+      services:          selectedServices,
+      start_date:        needsDates ? (document.getElementById('startDate').value || '—') : 'N/A',
+      start_time:        needsDates ? (document.getElementById('startTime').value || '—') : 'N/A',
+      end_date:          needsDates ? (document.getElementById('endDate').value || '—') : 'N/A',
+      end_time:          needsDates ? (document.getElementById('endTime').value || '—') : 'N/A',
+      approved_funding:  funding ? funding.value : '—',
+    };
+
+    try {
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+      successMsg.style.display = 'flex';
+      form.reset();
+      dateBlock.classList.remove('visible');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      console.error('EmailJS error:', err);
+      errorText.innerHTML = '<strong>Failed to send.</strong> Error: ' + (err.text || JSON.stringify(err)) + '. Check your EmailJS credentials.';
+      errorMsg.style.display = 'flex';
+    } finally {
+      submitBtn.disabled = false;
+      spinner.style.display = 'none';
+      btnText.textContent = 'Send Submission';
+    }
+  });
+
+  // Clear red borders on input
+  document.querySelectorAll('input, textarea').forEach(el => {
+    el.addEventListener('input', () => { el.style.borderColor = ''; });
+  });
+</script>
+</body>
+</html>
